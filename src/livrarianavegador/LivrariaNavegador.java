@@ -7,47 +7,59 @@
 package livrarianavegador;
 
 import java.sql.*;
-import java.io.*;
+import javax.swing.*;
 
 public class LivrariaNavegador {
     
-    public static void main(String[] args) throws SQLException {
-
-	try {
-		Class.forName("com.mysql.jdbc.Driver");
-	} catch (ClassNotFoundException cnf) {
-		System.out.println("Driver nao carregado");
-		System.exit(0);
-	}
-
-	try {
-		// estabelecimento da conexao
-		/*String url = "jdbc:postgresql://localhost/livraria";
-		String usuario = "postgres";
-		String senha = "1234";*/
-		String url = "jdbc:mysql://localhost/Livraria";
-		String usuario = "root";
-		String senha = "NOBELnobel1493*";
-
-		Connection con = DriverManager.getConnection(url, usuario, senha);
-
-		PreparedStatement pstmt = con.prepareStatement("update LIVROS set capa = ? where livro_id = ?");
-
-		for (int cont = 1; cont <= 16; cont++) {
-			File file = new File(cont+".gif");
-			FileInputStream inputImage = new FileInputStream(file);
-			pstmt.setBinaryStream(1, inputImage, (int)(file.length()));
-			pstmt.setInt(2,cont);
-			pstmt.executeUpdate();
-			System.out.println("Atualizado livro "+cont);
-		}
-
-		con.close();
-
-	} catch (Exception sql2) {
-		System.out.println(sql2);
-		sql2.printStackTrace();
-	}
-
-}
+    public static void main(String[] args) throws Exception {
+        // carregar driver JDBC
+        Class.forName("com.mysql.jdbc.Driver");
+        
+        // obter conexao
+        String url = "jdbc:mysql://localhost/Livraria";
+        String user = "root";
+        String passwd = "NOBELnobel1493*";
+        Connection con = DriverManager.getConnection(url, user, passwd);
+        
+        // criar Statement
+        Statement stmt = con.createStatement();
+        
+        // enviar query
+        ResultSet rs = stmt.executeQuery("SELECT titulo,livro_id,autor, editora, ano, preco, estoque, reserva, "
+                                        +   "livros.descricao, generos.descricao, capa "
+                                        + "FROM livros "
+                                        + "JOIN generos "
+                                        + "USING(genero_ID);");
+        
+        // tratar os dados da query
+        while (rs.next()) {
+            System.out.println(rs.getString(1));
+        }
+        
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(JanelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(JanelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(JanelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(JanelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }        
+        
+        JanelaPrincipal janelaLivraria = new JanelaPrincipal();
+        //janelaLivraria.set;
+        janelaLivraria.setResultQuery(rs);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new JanelaPrincipal().setVisible(true);
+            }
+        });       
+    }   
 }
