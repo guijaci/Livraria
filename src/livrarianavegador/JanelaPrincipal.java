@@ -205,7 +205,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                 .addComponent(separator_NomeDadosSeparador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textbox_Autor, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                    .addComponent(textbox_Autor, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
                     .addComponent(textbox_SubTitulo, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(textbox_Ano)
                     .addComponent(textbox_Editora, javax.swing.GroupLayout.Alignment.TRAILING)

@@ -254,7 +254,7 @@
                           <Component id="separator_NomeDadosSeparador" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="textbox_Autor" alignment="0" pref="220" max="32767" attributes="0"/>
+                              <Component id="textbox_Autor" alignment="0" pref="204" max="32767" attributes="0"/>
                               <Component id="textbox_SubTitulo" alignment="1" max="32767" attributes="0"/>
                               <Component id="textbox_Ano" alignment="0" max="32767" attributes="0"/>
                               <Component id="textbox_Editora" alignment="1" max="32767" attributes="0"/>
