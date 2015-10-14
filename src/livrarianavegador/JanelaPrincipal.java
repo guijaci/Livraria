@@ -1,26 +1,33 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package livrarianavegador;
 
+import daolivraria.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 
-/**
- *
- * @author User
- */
 public class JanelaPrincipal extends javax.swing.JFrame {
 
-    /**
-     * Creates new form NewJFrame
-     */
+    private LivroDAO livrosdao;
+    private ArrayList <LivroTO> livros;
+    private int index;
+    
     public JanelaPrincipal() {
+        index = 0;
+        livrosdao = new LivroDAO();
+        livros = livrosdao.listAll();
         initComponents();
+        /*try{
+            panel_Capa.add(new JLabel(new ImageIcon(livrosdao.getCapaImage(index+1))));
+        }catch(NullPointerException e)
+        {
+            System.out.println(e.getMessage());
+        }*/
+        panel_Capa.repaint();
     }
 
     /**
@@ -47,7 +54,6 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         panel_Capa = new javax.swing.JPanel();
         panel_Livros = new javax.swing.JPanel();
         separator_NomeDadosSeparador = new javax.swing.JSeparator();
-        label_SubTitulo = new javax.swing.JLabel();
         label_Autor = new javax.swing.JLabel();
         label_Editora = new javax.swing.JLabel();
         label_Ano = new javax.swing.JLabel();
@@ -55,7 +61,6 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         label_Preco = new javax.swing.JLabel();
         label_Quantidade = new javax.swing.JLabel();
         label_Reservados = new javax.swing.JLabel();
-        textbox_SubTitulo = new javax.swing.JTextField();
         textbox_Autor = new javax.swing.JTextField();
         textbox_Editora = new javax.swing.JTextField();
         textbox_Ano = new javax.swing.JTextField();
@@ -67,29 +72,41 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         textarea_Descricao = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(680, 395));
-        setPreferredSize(new java.awt.Dimension(680, 395));
+        setMinimumSize(new java.awt.Dimension(680, 370));
+        setPreferredSize(new java.awt.Dimension(680, 370));
 
         label_NomeLivro.setText("Livro:");
 
         textbox_NomeLivro.setEditable(false);
-        textbox_NomeLivro.setText("Não Selecionado");
-        textbox_NomeLivro.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textbox_NomeLivroActionPerformed(evt);
-            }
-        });
+        textbox_NomeLivro.setText(livros.get(index).getTitulo()
+        );
 
         textbox_IDLivro.setEditable(false);
-        textbox_IDLivro.setText("--");
+        textbox_IDLivro.setText(Integer.toString(livros.get(index).getLivro_id())
+        );
 
         label_IDLivro.setText("ID:");
 
         button_Primeiro.setText("Primeiro");
+        button_Primeiro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_PrimeiroActionPerformed(evt);
+            }
+        });
 
         button_Anterior.setText("Anterior");
+        button_Anterior.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_AnteriorActionPerformed(evt);
+            }
+        });
 
         button_Proximo.setText("Próximo");
+        button_Proximo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_ProximoActionPerformed(evt);
+            }
+        });
 
         button_Ultimo.setText("Último");
         button_Ultimo.addActionListener(new java.awt.event.ActionListener() {
@@ -131,8 +148,6 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
         separator_NomeDadosSeparador.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        label_SubTitulo.setText("Sub-Título:");
-
         label_Autor.setText("Autor:");
 
         label_Editora.setText("Editora:");
@@ -147,66 +162,52 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
         label_Reservados.setText("Reservados:");
 
-        textbox_SubTitulo.setEditable(false);
-        textbox_SubTitulo.setText("--");
-        textbox_SubTitulo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textbox_SubTituloActionPerformed(evt);
-            }
-        });
-
         textbox_Autor.setEditable(false);
-        textbox_Autor.setText("--");
-        textbox_Autor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textbox_AutorActionPerformed(evt);
-            }
-        });
+        textbox_Autor.setText(livros.get(index).getAutor());
 
         textbox_Editora.setEditable(false);
-        textbox_Editora.setText("--");
+        textbox_Editora.setText(livros.get(index).getEditora());
 
         textbox_Ano.setEditable(false);
-        textbox_Ano.setText("--");
+        textbox_Ano.setText(Integer.toString(livros.get(index).getAno()));
 
         textbox_Genero.setEditable(false);
-        textbox_Genero.setText("--");
-        textbox_Genero.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textbox_GeneroActionPerformed(evt);
-            }
-        });
+        textbox_Genero.setText(livros.get(index).getGenero()
+        );
 
         textbox_Preco.setEditable(false);
-        textbox_Preco.setText("--");
+        textbox_Preco.setText(String.format("R$ %.2f",livros.get(index).getPreco()));
 
         textbox_Quantidade.setEditable(false);
-        textbox_Quantidade.setText("--");
+        textbox_Quantidade.setText(Integer.toString(livros.get(index).getEstoque())
+        );
 
         textbox_Reservados.setEditable(false);
-        textbox_Reservados.setText("--");
+        textbox_Reservados.setText(Integer.toString(livros.get(index).getReserva()));
 
         javax.swing.GroupLayout panel_LivrosLayout = new javax.swing.GroupLayout(panel_Livros);
         panel_Livros.setLayout(panel_LivrosLayout);
         panel_LivrosLayout.setHorizontalGroup(
             panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_LivrosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(label_Autor)
-                    .addComponent(label_Editora)
-                    .addComponent(label_Ano)
-                    .addComponent(label_Preco)
-                    .addComponent(label_Quantidade)
-                    .addComponent(label_Genero)
-                    .addComponent(label_Reservados)
-                    .addComponent(label_SubTitulo))
+                .addGroup(panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_LivrosLayout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addGroup(panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(label_Autor)
+                            .addComponent(label_Editora)
+                            .addComponent(label_Ano)
+                            .addComponent(label_Preco)
+                            .addComponent(label_Quantidade)
+                            .addComponent(label_Genero)))
+                    .addGroup(panel_LivrosLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(label_Reservados)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(separator_NomeDadosSeparador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textbox_Autor, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(textbox_SubTitulo, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(textbox_Autor, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                     .addComponent(textbox_Ano)
                     .addComponent(textbox_Editora, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(textbox_Preco)
@@ -221,12 +222,8 @@ public class JanelaPrincipal extends javax.swing.JFrame {
             .addGroup(panel_LivrosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(textbox_SubTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(label_SubTitulo))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(label_Autor)
-                    .addComponent(textbox_Autor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(textbox_Autor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(label_Autor))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_LivrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(label_Editora)
@@ -254,9 +251,11 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        textarea_Descricao.setEditable(false);
         textarea_Descricao.setColumns(20);
         textarea_Descricao.setRows(5);
-        textarea_Descricao.setText("Sem descrição.");
+        textarea_Descricao.setTabSize(0);
+        textarea_Descricao.setText(livros.get(index).getDescricao());
         scrollpanel_Descricao.setViewportView(textarea_Descricao);
 
         javax.swing.GroupLayout panel_DadosLivroLayout = new javax.swing.GroupLayout(panel_DadosLivro);
@@ -281,7 +280,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                     .addComponent(panel_Livros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_Capa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scrollpanel_Descricao, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                .addComponent(scrollpanel_Descricao)
                 .addContainerGap())
         );
 
@@ -298,8 +297,8 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                 .addComponent(button_Anterior, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(textbox_Procurar)
-                    .addComponent(button_Procurar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(button_Procurar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textbox_Procurar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(button_Proximo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -331,54 +330,62 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                     .addComponent(textbox_IDLivro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(label_IDLivro))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollpanel_DadosLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollpanel_DadosLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(button_Anterior)
                     .addComponent(button_Primeiro)
+                    .addComponent(button_Anterior)
                     .addComponent(textbox_Procurar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(button_Proximo)
                     .addComponent(button_Ultimo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(button_Procurar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void textbox_NomeLivroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textbox_NomeLivroActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textbox_NomeLivroActionPerformed
-
     private void button_UltimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_UltimoActionPerformed
-        // TODO add your handling code here:
+        index = livros.size()-1;
+        updateBoxes();
     }//GEN-LAST:event_button_UltimoActionPerformed
 
     private void textbox_ProcurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textbox_ProcurarActionPerformed
-        // TODO add your handling code here:
+        button_ProcurarActionPerformed(evt);
     }//GEN-LAST:event_textbox_ProcurarActionPerformed
 
-    private void textbox_AutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textbox_AutorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textbox_AutorActionPerformed
-
     private void button_ProcurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ProcurarActionPerformed
-        // TODO add your handling code here:
-        try {
-            //rs.;
-            System.out.println(rs.getRow());
-            textbox_NomeLivro.setText("honktonk"/*rs.getString(1)*/);
-        }catch(Exception e){System.out.println(e.getClass());};
+        String pesquisa = textbox_Procurar.getText();
+        for(LivroTO livro: livros)
+        {
+            if(livro.getTitulo().equals(pesquisa))
+            {
+                JanelaTabela janTab = new JanelaTabela(livro);
+                janTab.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                janTab.setVisible(true);
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Livro \""+pesquisa+"\" não encontrado.");
     }//GEN-LAST:event_button_ProcurarActionPerformed
 
-    private void textbox_SubTituloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textbox_SubTituloActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textbox_SubTituloActionPerformed
+    private void button_PrimeiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_PrimeiroActionPerformed
+        index = 0;
+        updateBoxes();
+    }//GEN-LAST:event_button_PrimeiroActionPerformed
 
-    private void textbox_GeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textbox_GeneroActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textbox_GeneroActionPerformed
+    private void button_AnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AnteriorActionPerformed
+        if(index > 0)
+            index--;
+        updateBoxes();
+    }//GEN-LAST:event_button_AnteriorActionPerformed
+
+    private void button_ProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ProximoActionPerformed
+        if(index < livros.size()-1)
+            index++;
+        updateBoxes();
+    }//GEN-LAST:event_button_ProximoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -406,7 +413,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(JanelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -415,29 +422,20 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         });
     }
     
-    public void setResultQuery(ResultSet rs)
+    private void updateBoxes()
     {
-        this.rs = rs.;
-        try {
-            this.rs.first();
-            System.out.println(rs.getString(1));
-        } catch (SQLException ex) {
-            Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        refreshFields();
+    textbox_Ano.setText(Integer.toString(livros.get(index).getAno()));
+    textbox_Autor.setText(livros.get(index).getAutor());
+    textbox_Editora.setText(livros.get(index).getEditora());
+    textbox_Genero.setText(livros.get(index).getGenero());
+    textbox_IDLivro.setText(Integer.toString(livros.get(index).getLivro_id()));
+    textbox_NomeLivro.setText(livros.get(index).getTitulo());
+    textbox_Preco.setText(String.format("R$ %.2f", livros.get(index).getPreco()));
+    textbox_Quantidade.setText(Integer.toString(livros.get(index).getEstoque()));
+    textbox_Reservados.setText(Integer.toString(livros.get(index).getReserva()));
+    textarea_Descricao.setText(livros.get(index).getDescricao());
     }
-    
-    private void refreshFields() 
-    {
-        System.out.println("marc");
-        textbox_NomeLivro.setText("pula");
-        try {
-            System.out.println(rs.getRow());
-        } catch (SQLException ex) {
-            Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+ 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_Anterior;
     private javax.swing.JButton button_Primeiro;
@@ -453,7 +451,6 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel label_Preco;
     private javax.swing.JLabel label_Quantidade;
     private javax.swing.JLabel label_Reservados;
-    private javax.swing.JLabel label_SubTitulo;
     private javax.swing.JPanel panel_Capa;
     private javax.swing.JPanel panel_DadosLivro;
     private javax.swing.JPanel panel_Livros;
@@ -471,8 +468,5 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextField textbox_Procurar;
     private javax.swing.JTextField textbox_Quantidade;
     private javax.swing.JTextField textbox_Reservados;
-    private javax.swing.JTextField textbox_SubTitulo;
     // End of variables declaration//GEN-END:variables
-
-    private ResultSet rs;
 }
